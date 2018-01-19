@@ -1,6 +1,7 @@
 package com.example.shreyas.calculator;
 
 import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView resultTextView;
+    private TextView revealFrameView;
     private TextView buttonZero, buttonOne, buttonTwo, buttonThree, buttonFour, buttonFive, buttonSix, buttonSeven, buttonEight, buttonNine, buttonAdd, buttonSubtract,
             buttonDivide, buttonMultiply, buttonEqual, buttonClear, buttonPoint, buttonHistory;
     private boolean isEqualClicked;
@@ -33,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         populateOperatorMap();
 
         resultTextView = findViewById(R.id.result);
+        revealFrameView = findViewById(R.id.reveal_frame);
         buttonZero = findViewById(R.id.button0);
         buttonOne = findViewById(R.id.button1);
         buttonTwo = findViewById(R.id.button2);
@@ -53,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         buttonEqual = findViewById(R.id.button_equal);
 
         resultTextView.setText("");
+        revealFrameView.setVisibility(View.INVISIBLE);
 
         buttonZero.setOnClickListener(this);
         buttonOne.setOnClickListener(this);
@@ -92,21 +96,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             resultTextView.setText(idTextMap.get(v.getId()));
             operatorIsSetFlag = false;
             operandGenerator = "";
+
+            // Reveal Animation
+            int cx = revealFrameView.getWidth()/2;
+            int cy = revealFrameView.getHeight();
+            float finalRadius = (float) Math.hypot(cx, cy) + 5;
+            Animator anim =
+                    ViewAnimationUtils.createCircularReveal(revealFrameView, cx, cy, 0, finalRadius);
+
+            anim.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    revealFrameView.setVisibility(View.INVISIBLE);
+                }
+            });
+
+            revealFrameView.setVisibility(View.VISIBLE);
+            anim.start();
+
         } else if (v.getId() == R.id.button_equal) {
             // Add Equality Code
             String result = "";
             operandGenerator = "";
-
-            int cx = resultTextView.getWidth();
-            int cy = 0;
-
-            float finalRadius = (float) Math.hypot(cx, cy);
-
-            Animator anim =
-                    ViewAnimationUtils.createCircularReveal(resultTextView, cx, cy, 0, finalRadius);
-
-            resultTextView.setVisibility(View.VISIBLE);
-            anim.start();
 
             switch (operator) {
                 case 0:
