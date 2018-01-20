@@ -13,10 +13,10 @@
         android:layout_weight="2">
 
         <TextView
-            android:layout_width="match_parent"
             android:id="@+id/reveal_frame"
-            android:background="@color/colorAccent"
-            android:layout_height="match_parent" />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorAccent" />
 
         <TextView
             android:id="@+id/result"
@@ -28,6 +28,14 @@
             android:text=""
             android:textColor="@color/colorAccent"
             android:textSize="56sp" />
+
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/history_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:fadeScrollbars="true"
+            android:scrollbarStyle="insideOverlay" />
 
     </FrameLayout>
 
@@ -42,6 +50,7 @@
             style="@style/ButtonTheme"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:background="@color/history_color"
             android:text="History"
             android:textSize="18sp" />
 
@@ -50,6 +59,7 @@
             style="@style/ButtonTheme"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:background="@color/operator_color"
             android:text="C" />
 
         <TextView
@@ -57,6 +67,7 @@
             style="@style/ButtonTheme"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:background="@color/operator_color"
             android:text="+" />
 
     </LinearLayout>
@@ -93,6 +104,7 @@
             style="@style/ButtonTheme"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:background="@color/operator_color"
             android:text="X" />
 
     </LinearLayout>
@@ -129,6 +141,7 @@
             style="@style/ButtonTheme"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:background="@color/operator_color"
             android:text="/" />
 
     </LinearLayout>
@@ -165,6 +178,7 @@
             style="@style/ButtonTheme"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:background="@color/operator_color"
             android:text="-" />
 
     </LinearLayout>
