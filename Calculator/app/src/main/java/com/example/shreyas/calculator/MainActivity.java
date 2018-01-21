@@ -10,31 +10,30 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.PriorityQueue;
-import java.util.Queue;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView resultTextView;
     private TextView revealFrameView;
+    private TextView noHistoryTextView;
     private TextView buttonZero, buttonOne, buttonTwo, buttonThree, buttonFour, buttonFive, buttonSix, buttonSeven, buttonEight, buttonNine, buttonAdd, buttonSubtract,
             buttonDivide, buttonMultiply, buttonEqual, buttonClear, buttonPoint, buttonHistory;
     private boolean isHistoryPressed = false;
     private HashMap<Integer, String> idTextMap = new HashMap<>();
     private HashMap<Integer, Integer> operatorMap = new HashMap<>();
+    private HashMap<Integer, String> operatorIDToTextMap = new HashMap<>();
     private ArrayList<HistoryItem> historyList = new ArrayList<>();
 
     String operandGenerator = "";
     float operandOne, operandTwo;
     int operator;
-    boolean operatorIsSetFlag = false, errorFlag = false;
+    boolean operatorIsSetFlag = false, errorFlag = false, operandTwoIsSet = false;
 
     private RecyclerView historyRecyclerView;
-    private HistoryAdapter historyAdpater;
+    private HistoryAdapter historyAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +42,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         populateTextMap();
         populateOperatorMap();
+        populateOperatorIDToTextMap();
 
         resultTextView = findViewById(R.id.result);
+        noHistoryTextView  = findViewById(R.id.no_history);
         revealFrameView = findViewById(R.id.reveal_frame);
         buttonZero = findViewById(R.id.button0);
         buttonOne = findViewById(R.id.button1);
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         resultTextView.setText("");
         revealFrameView.setVisibility(View.INVISIBLE);
+        noHistoryTextView.setVisibility(View.INVISIBLE);
 
         buttonZero.setOnClickListener(this);
         buttonOne.setOnClickListener(this);
@@ -89,8 +91,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         buttonEqual.setOnClickListener(this);
 
         // Recycler View Stuff
-        historyAdpater = new HistoryAdapter(historyList, this);
-        historyRecyclerView.setAdapter(historyAdpater);
+        historyAdapter = new HistoryAdapter(historyList, this);
+        historyRecyclerView.setAdapter(historyAdapter);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setReverseLayout(true);
         historyRecyclerView.setLayoutManager(manager);
@@ -111,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 operandOne = Float.parseFloat(operandGenerator);
             } else {
                 operandTwo = Float.parseFloat(operandGenerator);
+                operandTwoIsSet = true;
             }
         } else if (v.getId() == R.id.button_clear) {
             resultTextView.setText(idTextMap.get(v.getId()));
@@ -136,51 +139,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             });
 
             historyRecyclerView.setVisibility(View.INVISIBLE);
+            noHistoryTextView.setVisibility(View.INVISIBLE);
             revealFrameView.setVisibility(View.VISIBLE);
             anim.start();
 
-        } else if (v.getId() == R.id.button_equal && !isHistoryPressed) {
+        } else if (v.getId() == R.id.button_equal && !isHistoryPressed && operandTwoIsSet) {
             // Add Equality Code
-            String result = "";
-            String operatorString = "";
             operandGenerator = "";
 
-            switch (operator) {
-                case 0:
-                    result = String.valueOf(operandOne + operandTwo);
-                    operatorString = " + ";
-                    break;
-                case 1:
-                    result = String.valueOf(operandOne - operandTwo);
-                    operatorString = " - ";
-                    break;
-                case 2:
-                    result = String.valueOf(operandOne * operandTwo);
-                    operatorString = " x ";
-                    break;
-                case 3:
-                    result = String.valueOf(operandOne / operandTwo);
-                    operatorString = " / ";
-                    break;
-                default:
-                    resultTextView.setText(result);
-            }
-
+            String result = solve(operandOne, operandTwo, operator);
+            String operatorString = operatorIDToTextMap.get(operator);
             resultTextView.setText(result);
+
+            historyRecyclerView.setVisibility(View.INVISIBLE);
+            noHistoryTextView.setVisibility(View.INVISIBLE);
             addToHistory(operandOne + operatorString + operandTwo, result);
+
             operandOne = Float.parseFloat(result);
             operandTwo = 0;
+            operandTwoIsSet = false;
             operatorIsSetFlag = false;
 
         } else if (v.getId() == R.id.button_point && !isHistoryPressed) {
             String toDisplayText = appendExistingTextViewString(v.getId());
             operandGenerator += idTextMap.get(v.getId());
             resultTextView.setText(toDisplayText);
+
         } else if (v.getId() == R.id.history) {
-            historyRecyclerView.setVisibility(View.VISIBLE);
+            if(historyList.size() > 0) {
+                historyRecyclerView.setVisibility(View.VISIBLE);
+                noHistoryTextView.setVisibility(View.INVISIBLE);
+            } else {
+                noHistoryTextView.setVisibility(View.VISIBLE);
+                historyRecyclerView.setVisibility(View.INVISIBLE);
+            }
             resultTextView.setVisibility(View.INVISIBLE);
             isHistoryPressed = true;
-        } else if(!isHistoryPressed) {
+
+        } else if (!isHistoryPressed && v.getId()!=R.id.button_equal) {
+            // LOGS
+            Log.e("TAG", "operandTwoSet " + operandTwoIsSet + " " + "operatorIsSetFlag" + operatorIsSetFlag);
+
             // Operator was found
             if (!operatorIsSetFlag) {
                 try {
@@ -188,15 +187,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     operandGenerator = "";
                     resultTextView.setText(appendExistingTextViewString(v.getId()));
                     operatorIsSetFlag = true;
-                } catch (NullPointerException e){
+                } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
             } else {
-                resultTextView.setText("Error");
-                errorFlag = true;
-                operandOne = 0;
-                operandTwo = 0;
-                operator = 0;
+                if (operandTwoIsSet) {
+                    String updatedResult = solve(operandOne, operandTwo, operator);
+                    operandOne = Float.parseFloat(updatedResult);
+                    operandTwo = 0;
+                    operator = operatorMap.get(v.getId());
+                    operandGenerator = "";
+
+                    String resultTextViewString = updatedResult + idTextMap.get(v.getId());
+                    resultTextView.setText(resultTextViewString);
+                } else {
+                    operator = operatorMap.get(v.getId());
+                    String resultText = resultTextView.getText().toString();
+                    int sizeOfResultText = resultText.length();
+                    resultText = resultText.substring(0, sizeOfResultText - 1) + idTextMap.get(v.getId());
+                    resultTextView.setText(resultText);
+                }
             }
         }
     }
@@ -220,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         idTextMap.put(R.id.button_add, "+");
         idTextMap.put(R.id.button_point, ".");
         idTextMap.put(R.id.button_equal, "=");
-        idTextMap.put(R.id.history,"D");
+        idTextMap.put(R.id.history, "D");
     }
 
     public void populateOperatorMap() {
@@ -238,13 +248,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void addToHistory(String expression, String result) {
         if (historyList.size() < 5) {
             historyList.add(new HistoryItem(expression, result));
-            historyAdpater.notifyDataSetChanged();
+            historyAdapter.notifyDataSetChanged();
         } else if (historyList.size() >= 5) {
             for (int i = 0; i <= 3; i++) {
                 historyList.set(i, historyList.get(i + 1));
             }
             historyList.set(4, new HistoryItem(expression, result));
-            historyAdpater.notifyDataSetChanged();
+            historyAdapter.notifyDataSetChanged();
         }
+    }
+
+    public String solve(float operandOne, float operandTwo, int operator) {
+        switch (operator) {
+            case 0:
+                return String.valueOf(operandOne + operandTwo);
+            case 1:
+                return String.valueOf(operandOne - operandTwo);
+            case 2:
+                return String.valueOf(operandOne * operandTwo);
+            case 3:
+                return String.valueOf(operandOne / operandTwo);
+        }
+
+        return "Error";
+    }
+
+    public void populateOperatorIDToTextMap() {
+        operatorIDToTextMap.put(3, " / ");
+        operatorIDToTextMap.put(2, " x ");
+        operatorIDToTextMap.put(1, " - ");
+        operatorIDToTextMap.put(0, " + ");
     }
 }
