@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     String operandGenerator = "";
     float operandOne, operandTwo;
     int operator;
-    boolean operatorIsSetFlag = false, errorFlag = false, operandTwoIsSet = false;
+    boolean operatorIsSetFlag = false, errorFlag = false, operandOneIsSet = false, operandTwoIsSet = false;
 
     private RecyclerView historyRecyclerView;
     private HistoryAdapter historyAdapter;
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         populateOperatorIDToTextMap();
 
         resultTextView = findViewById(R.id.result);
-        noHistoryTextView  = findViewById(R.id.no_history);
+        noHistoryTextView = findViewById(R.id.no_history);
         revealFrameView = findViewById(R.id.reveal_frame);
         buttonZero = findViewById(R.id.button0);
         buttonOne = findViewById(R.id.button1);
@@ -103,24 +103,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        Log.e("TAG", operandOne + " " + operator + " " + operandTwo);
+
         if (idTextMap.get(v.getId()).compareTo("9") <= 0 && idTextMap.get(v.getId()).compareTo("0") >= 0 && !errorFlag && !isHistoryPressed) {
             String toDisplayText = appendExistingTextViewString(v.getId());
             operandGenerator += idTextMap.get(v.getId());
             resultTextView.setText(toDisplayText);
 
             if (!operatorIsSetFlag) {
-                operandOne = Float.parseFloat(operandGenerator);
+                try {
+                    operandOne = Float.parseFloat(operandGenerator);
+                    operandOneIsSet = true;
+                } catch (NumberFormatException e) {
+                    Log.e("MainActivity", "Number Format Exception");
+                    resultTextView.setText("Error");
+                    errorFlag = true;
+                }
             } else {
-                operandTwo = Float.parseFloat(operandGenerator);
-                operandTwoIsSet = true;
+                try {
+                    operandTwo = Float.parseFloat(operandGenerator);
+                    operandTwoIsSet = true;
+                } catch (NumberFormatException e) {
+                    Log.e("MainActivity", "Number Format Exception");
+                    resultTextView.setText("Error");
+                    errorFlag = true;
+                }
             }
         } else if (v.getId() == R.id.button_clear) {
             resultTextView.setText(idTextMap.get(v.getId()));
             operatorIsSetFlag = false;
+            operandOneIsSet = false;
+            operandTwoIsSet = false;
             operandGenerator = "";
             errorFlag = false;
             isHistoryPressed = false;
+            operandOne = 0;
+            operandTwo = 0;
 
             // Reveal Animation
             int cx = revealFrameView.getWidth() / 2;
@@ -166,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             resultTextView.setText(toDisplayText);
 
         } else if (v.getId() == R.id.history) {
-            if(historyList.size() > 0) {
+            if (historyList.size() > 0) {
                 historyRecyclerView.setVisibility(View.VISIBLE);
                 noHistoryTextView.setVisibility(View.INVISIBLE);
             } else {
@@ -176,12 +193,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             resultTextView.setVisibility(View.INVISIBLE);
             isHistoryPressed = true;
 
-        } else if (!isHistoryPressed && v.getId()!=R.id.button_equal) {
-            // LOGS
-            Log.e("TAG", "operandTwoSet " + operandTwoIsSet + " " + "operatorIsSetFlag" + operatorIsSetFlag);
+        } else if (!isHistoryPressed && v.getId() != R.id.button_equal) {
 
             // Operator was found
-            if (!operatorIsSetFlag) {
+            if (!operandOneIsSet) {
+                operandGenerator = idTextMap.get(v.getId());
+                resultTextView.setText(appendExistingTextViewString(v.getId()));
+            } else if (!operatorIsSetFlag) {
                 try {
                     operator = operatorMap.get(v.getId());
                     operandGenerator = "";
@@ -195,20 +213,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     String updatedResult = solve(operandOne, operandTwo, operator);
                     operandOne = Float.parseFloat(updatedResult);
                     operandTwo = 0;
+                    operandTwoIsSet = false;
                     operator = operatorMap.get(v.getId());
                     operandGenerator = "";
-
                     String resultTextViewString = updatedResult + idTextMap.get(v.getId());
                     resultTextView.setText(resultTextViewString);
                 } else {
-                    operator = operatorMap.get(v.getId());
-                    String resultText = resultTextView.getText().toString();
-                    int sizeOfResultText = resultText.length();
-                    resultText = resultText.substring(0, sizeOfResultText - 1) + idTextMap.get(v.getId());
-                    resultTextView.setText(resultText);
+                    int operatorFromMap = operatorMap.get(v.getId());
+                    if (operatorFromMap != 1) {
+                        operator = operatorFromMap;
+                        String resultText = resultTextView.getText().toString();
+                        int sizeOfResultText = resultText.length();
+                        resultText = resultText.substring(0, sizeOfResultText - 1) + idTextMap.get(v.getId());
+                        resultTextView.setText(resultText);
+                    } else {
+                        operandGenerator = idTextMap.get(v.getId());
+                        resultTextView.setText(appendExistingTextViewString(v.getId()));
+                    }
                 }
             }
         }
+
+        Log.e("TAG", operandOne + " " + operator + " " + operandTwo);
+        Log.e("TAG", "operandTwoSet " + operandTwoIsSet + " " + "operatorIsSetFlag" + operatorIsSetFlag + " operandOneIsSet " + operandOneIsSet );
     }
 
     public void populateTextMap() {
