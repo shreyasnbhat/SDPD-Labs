@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#006064</color>
     <color name="colorAccent">#00ACC1</color>
     <color name="background_main">#455A64</color>
+    <color name="result_color">#78909C</color>
     <color name="operator_color">#263238</color>
     <color name="history_color">#00ACC1</color>
 </resources>

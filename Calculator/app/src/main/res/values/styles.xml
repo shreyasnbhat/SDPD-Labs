@@ -10,7 +10,7 @@
 
     <style name="ButtonTheme">
         <item name="android:layout_weight">1</item>
-        <item name="android:fontFamily">monospace</item>
+        <item name="android:fontFamily">@font/montserrat_medium</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
         <item name="android:padding">8dp</item>

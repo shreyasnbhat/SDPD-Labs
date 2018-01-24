@@ -22,11 +22,10 @@
             android:id="@+id/result"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fontFamily="sans-serif"
             android:gravity="end|bottom"
             android:padding="8dp"
             android:text=""
-            android:textColor="@color/colorAccent"
+            android:textColor="#FFFFFF"
             android:textSize="56sp" />
 
 
@@ -58,8 +57,9 @@
         <TextView
             android:id="@+id/history"
             style="@style/ButtonTheme"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="2"
             android:background="@color/history_color"
             android:text="History"
             android:textSize="18sp" />
@@ -67,16 +67,18 @@
         <TextView
             android:id="@+id/button_clear"
             style="@style/ButtonTheme"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@color/operator_color"
             android:text="C" />
 
         <TextView
             android:id="@+id/button_add"
             style="@style/ButtonTheme"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@color/operator_color"
             android:text="+" />
 
@@ -91,29 +93,33 @@
         <TextView
             android:id="@+id/button7"
             style="@style/ButtonTheme"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:text="7" />
 
         <TextView
             android:id="@+id/button8"
             style="@style/ButtonTheme"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:text="8" />
 
         <TextView
             android:id="@+id/button9"
             style="@style/ButtonTheme"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:text="9" />
 
         <TextView
             android:id="@+id/button_multiply"
             style="@style/ButtonTheme"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@color/operator_color"
             android:text="X" />
 
@@ -128,29 +134,33 @@
         <TextView
             android:id="@+id/button4"
             style="@style/ButtonTheme"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:text="4" />
 
         <TextView
             android:id="@+id/button5"
             style="@style/ButtonTheme"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:text="5" />
 
         <TextView
             android:id="@+id/button6"
             style="@style/ButtonTheme"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:text="6" />
 
         <TextView
             android:id="@+id/button_divide"
             style="@style/ButtonTheme"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@color/operator_color"
             android:text="/" />
 
@@ -165,29 +175,33 @@
         <TextView
             android:id="@+id/button1"
             style="@style/ButtonTheme"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:text="1" />
 
         <TextView
             android:id="@+id/button2"
             style="@style/ButtonTheme"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:text="2" />
 
         <TextView
             android:id="@+id/button3"
             style="@style/ButtonTheme"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:text="3" />
 
         <TextView
             android:id="@+id/button_subtract"
             style="@style/ButtonTheme"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@color/operator_color"
             android:text="-" />
 
@@ -202,15 +216,17 @@
         <TextView
             android:id="@+id/button_point"
             style="@style/ButtonTheme"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:text="." />
 
         <TextView
             android:id="@+id/button0"
             style="@style/ButtonTheme"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:text="0" />
 
         <TextView
@@ -218,7 +234,7 @@
             style="@style/ButtonTheme"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2.5"
+            android:layout_weight="2"
             android:background="@color/colorAccent"
             android:text="=" />
 

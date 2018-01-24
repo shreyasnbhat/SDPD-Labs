@@ -163,19 +163,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (v.getId() == R.id.button_equal && !isHistoryPressed && operandTwoIsSet) {
             // Add Equality Code
             operandGenerator = "";
+            try {
+                String result = formatString(solve(operandOne, operandTwo, operator));
+                String operatorString = operatorIDToTextMap.get(operator);
+                resultTextView.setText(result);
 
-            String result = solve(operandOne, operandTwo, operator);
-            String operatorString = operatorIDToTextMap.get(operator);
-            resultTextView.setText(result);
+                historyRecyclerView.setVisibility(View.INVISIBLE);
+                noHistoryTextView.setVisibility(View.INVISIBLE);
+                addToHistory(operandOne + operatorString + operandTwo, result);
 
-            historyRecyclerView.setVisibility(View.INVISIBLE);
-            noHistoryTextView.setVisibility(View.INVISIBLE);
-            addToHistory(operandOne + operatorString + operandTwo, result);
-
-            operandOne = Float.parseFloat(result);
-            operandTwo = 0;
-            operandTwoIsSet = false;
-            operatorIsSetFlag = false;
+                operandOne = Float.parseFloat(result);
+                operandTwo = 0;
+                operandTwoIsSet = false;
+                operatorIsSetFlag = false;
+            } catch (Exception e) {
+                Log.e("MainActivity", e.getMessage());
+            }
 
         } else if (v.getId() == R.id.button_point && !isHistoryPressed) {
             String toDisplayText = appendExistingTextViewString(v.getId());
@@ -198,7 +201,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // Operator was found
             if (!operandOneIsSet) {
                 operandGenerator = idTextMap.get(v.getId());
-                resultTextView.setText(appendExistingTextViewString(v.getId()));
+                resultTextView.setText("Error");
+                errorFlag  = true;
             } else if (!operatorIsSetFlag) {
                 try {
                     operator = operatorMap.get(v.getId());
@@ -210,14 +214,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             } else {
                 if (operandTwoIsSet) {
-                    String updatedResult = solve(operandOne, operandTwo, operator);
-                    operandOne = Float.parseFloat(updatedResult);
-                    operandTwo = 0;
-                    operandTwoIsSet = false;
-                    operator = operatorMap.get(v.getId());
-                    operandGenerator = "";
-                    String resultTextViewString = updatedResult + idTextMap.get(v.getId());
-                    resultTextView.setText(resultTextViewString);
+                    try {
+                        String updatedResult = formatString(solve(operandOne, operandTwo, operator));
+                        operandOne = Float.parseFloat(updatedResult);
+                        operandTwo = 0;
+                        operandTwoIsSet = false;
+                        operator = operatorMap.get(v.getId());
+                        operandGenerator = "";
+                        String resultTextViewString = updatedResult + idTextMap.get(v.getId());
+                        resultTextView.setText(resultTextViewString);
+                    } catch (Exception e) {
+                        Log.e("MainActivity", e.getMessage());
+                    }
                 } else {
                     int operatorFromMap = operatorMap.get(v.getId());
                     if (operatorFromMap != 1) {
@@ -235,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         Log.e("TAG", operandOne + " " + operator + " " + operandTwo);
-        Log.e("TAG", "operandTwoSet " + operandTwoIsSet + " " + "operatorIsSetFlag" + operatorIsSetFlag + " operandOneIsSet " + operandOneIsSet );
+        Log.e("TAG", "operandTwoSet " + operandTwoIsSet + " " + "operatorIsSetFlag" + operatorIsSetFlag + " operandOneIsSet " + operandOneIsSet);
     }
 
     public void populateTextMap() {
@@ -272,6 +280,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return currentTextDisplayed + idTextMap.get(id);
     }
 
+    public String formatString(float operand) {
+        if (operand == (long) operand) {
+            return String.format("%d", (long) operand);
+        } else
+            return String.format("%s", operand);
+    }
+
     public void addToHistory(String expression, String result) {
         if (historyList.size() < 5) {
             historyList.add(new HistoryItem(expression, result));
@@ -285,19 +300,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public String solve(float operandOne, float operandTwo, int operator) {
+    public float solve(float operandOne, float operandTwo, int operator) throws Exception {
         switch (operator) {
             case 0:
-                return String.valueOf(operandOne + operandTwo);
+                return operandOne + operandTwo;
             case 1:
-                return String.valueOf(operandOne - operandTwo);
+                return operandOne - operandTwo;
             case 2:
-                return String.valueOf(operandOne * operandTwo);
+                return operandOne * operandTwo;
             case 3:
-                return String.valueOf(operandOne / operandTwo);
+                return operandOne / operandTwo;
         }
 
-        return "Error";
+        throw new Exception("Unsupported Operation Exception");
     }
 
     public void populateOperatorIDToTextMap() {
