@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     String operandGenerator = "";
     float operandOne, operandTwo;
     int operator;
-    boolean operatorIsSetFlag = false, errorFlag = false, operandOneIsSet = false, operandTwoIsSet = false;
+    boolean operatorIsSetFlag = false, errorFlag = false, operandOneIsSet = false, operandTwoIsSet = false, minusFlag = false;
 
     private RecyclerView historyRecyclerView;
     private HistoryAdapter historyAdapter;
@@ -138,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             isHistoryPressed = false;
             operandOne = 0;
             operandTwo = 0;
+            minusFlag = false;
 
             // Reveal Animation
             int cx = revealFrameView.getWidth() / 2;
@@ -160,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             revealFrameView.setVisibility(View.VISIBLE);
             anim.start();
 
-        } else if (v.getId() == R.id.button_equal && !isHistoryPressed && operandTwoIsSet) {
+        } else if (v.getId() == R.id.button_equal && !isHistoryPressed && operandTwoIsSet && !errorFlag) {
             // Add Equality Code
             operandGenerator = "";
             try {
@@ -170,17 +171,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 historyRecyclerView.setVisibility(View.INVISIBLE);
                 noHistoryTextView.setVisibility(View.INVISIBLE);
-                addToHistory(operandOne + operatorString + operandTwo, result);
+                addToHistory(formatString(operandOne) + operatorString + formatString(operandTwo), result);
 
                 operandOne = Float.parseFloat(result);
                 operandTwo = 0;
                 operandTwoIsSet = false;
                 operatorIsSetFlag = false;
+                minusFlag = false;
             } catch (Exception e) {
                 Log.e("MainActivity", e.getMessage());
             }
 
-        } else if (v.getId() == R.id.button_point && !isHistoryPressed) {
+        } else if (v.getId() == R.id.button_point && !isHistoryPressed && !errorFlag) {
             String toDisplayText = appendExistingTextViewString(v.getId());
             operandGenerator += idTextMap.get(v.getId());
             resultTextView.setText(toDisplayText);
@@ -196,13 +198,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             resultTextView.setVisibility(View.INVISIBLE);
             isHistoryPressed = true;
 
-        } else if (!isHistoryPressed && v.getId() != R.id.button_equal) {
+        } else if (!isHistoryPressed && v.getId() != R.id.button_equal && !errorFlag) {
 
             // Operator was found
             if (!operandOneIsSet) {
-                operandGenerator = idTextMap.get(v.getId());
-                resultTextView.setText("Error");
-                errorFlag  = true;
+                int operatorFromMap = operatorMap.get(v.getId());
+                if (operatorFromMap != 1) {
+                    operandGenerator = idTextMap.get(v.getId());
+                    resultTextView.setText("Error");
+                    errorFlag = true;
+                } else {
+                    operandGenerator = idTextMap.get(v.getId());
+                    resultTextView.setText(appendExistingTextViewString(v.getId()));
+                }
             } else if (!operatorIsSetFlag) {
                 try {
                     operator = operatorMap.get(v.getId());
@@ -226,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     } catch (Exception e) {
                         Log.e("MainActivity", e.getMessage());
                     }
-                } else {
+                } else if(!errorFlag){
                     int operatorFromMap = operatorMap.get(v.getId());
                     if (operatorFromMap != 1) {
                         operator = operatorFromMap;
@@ -235,8 +243,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         resultText = resultText.substring(0, sizeOfResultText - 1) + idTextMap.get(v.getId());
                         resultTextView.setText(resultText);
                     } else {
-                        operandGenerator = idTextMap.get(v.getId());
-                        resultTextView.setText(appendExistingTextViewString(v.getId()));
+                        if (!minusFlag) {
+                            operandGenerator = idTextMap.get(v.getId());
+                            resultTextView.setText(appendExistingTextViewString(v.getId()));
+                            minusFlag = true;
+                        } else {
+                            resultTextView.setText("Error");
+                            errorFlag = true;
+                        }
                     }
                 }
             }
