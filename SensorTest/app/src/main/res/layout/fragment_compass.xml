@@ -4,7 +4,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/green"
+    android:background="@color/colorAccent"
     tools:context="com.example.shreyas.sensortest.fragments.CompassFragment">
 
     <TextView
@@ -15,8 +15,8 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="28dp"
-        android:gravity="center"
         android:fontFamily="@font/monsterrat_semi_bold"
+        android:gravity="center"
         android:text="-"
         android:textColor="@color/white"
         android:textSize="32sp"
@@ -50,8 +50,8 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="-"
         android:fontFamily="@font/monsterrat_bold"
+        android:text="-"
         android:textColor="@color/white"
         android:textSize="26sp"
         app:layout_constraintBottom_toTopOf="@+id/compass"

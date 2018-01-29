@@ -1,17 +1,33 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/red"
+    android:background="@color/green"
+    android:orientation="vertical"
     tools:context="com.example.shreyas.sensortest.fragments.ProximityFragment">
 
     <TextView
+        android:id="@+id/distance"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:fontFamily="@font/monsterrat_bold"
         android:gravity="center"
         android:text="Proximity"
         android:textColor="@color/white"
         android:textSize="22sp" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/distance_words"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fontFamily="@font/monsterrat_bold"
+        android:gravity="center"
+        android:text="Far"
+        android:textColor="@color/white"
+        android:textSize="22sp" />
+
+
+</LinearLayout>

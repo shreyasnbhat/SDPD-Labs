@@ -88,7 +88,7 @@ public class CompassFragment extends Fragment implements SensorEventListener {
                 SensorManager.getOrientation(rotationMatrix, mOrientation);
                 float azimuthInRadians = mOrientation[0];
                 float azimuthInDegress = (float) (Math.toDegrees(azimuthInRadians) + 360) % 360;
-                degreeTextView.setText(String.format("%.2f",azimuthInDegress));
+                degreeTextView.setText(String.format("%.2f", azimuthInDegress));
                 directionTextView.setText(getDirectionFromAngle(azimuthInDegress));
                 RotateAnimation ra = new RotateAnimation(
                         mCurrentDegree,
@@ -106,7 +106,7 @@ public class CompassFragment extends Fragment implements SensorEventListener {
     }
 
     public String getDirectionFromAngle(double angle) {
-        if (angle < 22.5 && angle > 337.5) {
+        if (angle < 22.5 || angle > 337.5) {
             return "North";
         } else if (angle <= 67.5 && angle >= 22.5) {
             return "North-East";
