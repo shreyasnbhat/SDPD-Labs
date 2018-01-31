@@ -9,10 +9,10 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.shreyas.sensortest.R;
@@ -24,13 +24,13 @@ import java.util.Random;
 public class AccelerometerFragment extends Fragment implements SensorEventListener {
 
     private TextView accelerationValueDisplay;
-    private TextView randomNumberTextDisplay;
+    private ImageView randomNumberImageDisplay;
     private TextView shakeView;
 
     private SensorManager sensorManager;
     private Sensor accelerometerSensor;
 
-    private ArrayList<String> randomStrings = new ArrayList<>();
+    private ArrayList<Integer> randomStrings = new ArrayList<>();
 
     private float[] gravity = new float[3];
 
@@ -54,7 +54,7 @@ public class AccelerometerFragment extends Fragment implements SensorEventListen
         super.onViewCreated(view, savedInstanceState);
 
         accelerationValueDisplay = view.findViewById(R.id.accelerometer_values);
-        randomNumberTextDisplay = view.findViewById(R.id.random_string);
+        randomNumberImageDisplay = view.findViewById(R.id.random_string);
         shakeView = view.findViewById(R.id.shake_view);
 
         populateRandomStrings();
@@ -68,9 +68,9 @@ public class AccelerometerFragment extends Fragment implements SensorEventListen
     }
 
     public void populateRandomStrings() {
-        randomStrings.add("Rock");
-        randomStrings.add("Paper");
-        randomStrings.add("Scissor");
+        randomStrings.add(R.drawable.rock);
+        randomStrings.add(R.drawable.paper);
+        randomStrings.add(R.drawable.scissor);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class AccelerometerFragment extends Fragment implements SensorEventListen
             accelerationValueDisplay.setText(String.format("%.2f %.2f %.2f", event.values[0], event.values[1], event.values[2]));
 
             if (Math.abs(event.values[0] - gravity[0]) > 20 || Math.abs(event.values[1] - gravity[1]) > 20 || Math.abs(event.values[2] - gravity[2]) > 20) {
-                randomNumberTextDisplay.setText(randomStrings.get(rand.nextInt(3)));
+                randomNumberImageDisplay.setImageResource(randomStrings.get(rand.nextInt(3)));
                 shakeView.setText("Shake Detected!");
             } else {
                 shakeView.setText("");
