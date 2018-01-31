@@ -18,6 +18,17 @@
         android:textSize="22sp" />
 
     <TextView
+        android:id="@+id/shake_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fontFamily="@font/monsterrat_bold"
+        android:gravity="center"
+        android:text=""
+        android:textColor="@color/white"
+        android:textSize="22sp" />
+
+    <TextView
         android:id="@+id/random_string"
         android:layout_width="match_parent"
         android:layout_height="0dp"

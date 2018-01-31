@@ -25,6 +25,7 @@ public class AccelerometerFragment extends Fragment implements SensorEventListen
 
     private TextView accelerationValueDisplay;
     private TextView randomNumberTextDisplay;
+    private TextView shakeView;
 
     private SensorManager sensorManager;
     private Sensor accelerometerSensor;
@@ -54,6 +55,7 @@ public class AccelerometerFragment extends Fragment implements SensorEventListen
 
         accelerationValueDisplay = view.findViewById(R.id.accelerometer_values);
         randomNumberTextDisplay = view.findViewById(R.id.random_string);
+        shakeView = view.findViewById(R.id.shake_view);
 
         populateRandomStrings();
 
@@ -78,6 +80,9 @@ public class AccelerometerFragment extends Fragment implements SensorEventListen
 
             if (Math.abs(event.values[0] - gravity[0]) > 20 || Math.abs(event.values[1] - gravity[1]) > 20 || Math.abs(event.values[2] - gravity[2]) > 20) {
                 randomNumberTextDisplay.setText(randomStrings.get(rand.nextInt(3)));
+                shakeView.setText("Shake Detected!");
+            } else {
+                shakeView.setText("");
             }
             gravity = event.values.clone();
         }
