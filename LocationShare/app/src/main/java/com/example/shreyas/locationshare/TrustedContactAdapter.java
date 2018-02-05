@@ -16,10 +16,12 @@ public class TrustedContactAdapter extends RecyclerView.Adapter<ContactViewHolde
 
     private ArrayList<Contact> contactList = new ArrayList<>();
     private Context context;
+    private DBHandler dbHandler;
 
-    public TrustedContactAdapter(ArrayList<Contact> historyList, Context context) {
+    public TrustedContactAdapter(ArrayList<Contact> historyList, Context context, DBHandler handler) {
         this.contactList = historyList;
         this.context = context;
+        this.dbHandler = handler;
     }
 
     @Override
@@ -35,11 +37,22 @@ public class TrustedContactAdapter extends RecyclerView.Adapter<ContactViewHolde
     }
 
     @Override
-    public void onBindViewHolder(ContactViewHolder holder, int position) {
+    public void onBindViewHolder(ContactViewHolder holder, final int position) {
         String name = contactList.get(position).getName();
-        String number = contactList.get(position).getNumber();
+        final String number = contactList.get(position).getNumber();
         Contact contactItem = new Contact(name, number);
         holder.setContactView(contactItem);
+
+        holder.deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dbHandler.deleteContactById(ContactFormat.format(number));
+                contactList.remove(position);
+                notifyItemRemoved(position);
+                notifyItemRangeChanged(position, contactList.size());
+            }
+        });
+
     }
 
 }

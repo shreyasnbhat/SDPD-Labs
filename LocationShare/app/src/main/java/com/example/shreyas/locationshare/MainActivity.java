@@ -18,12 +18,16 @@ import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int SMS_PERMISSION_CODE = 0;
-    private static final int CONTACT_PICKER_RESULT = 1001;
+    private static final int CONTACT_PICKER_RESULT = 123;
+    private String[] permissionList = {Manifest.permission.RECEIVE_SMS,
+            Manifest.permission.SEND_SMS,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.READ_PHONE_STATE};
 
     private DBHandler dbHandler;
 
@@ -36,9 +40,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (!hasReadSmsPermission()) {
-            requestReceiveSMSPermission();
-        }
+        requestAllPermissions();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -53,14 +55,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        dbHandler = new DBHandler(this);
+
         // Recycler View Stuff
-        adapter = new TrustedContactAdapter(contactList, this);
+        adapter = new TrustedContactAdapter(contactList, this,dbHandler);
         trustedContactRecyclerView.setAdapter(adapter);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         trustedContactRecyclerView.setLayoutManager(manager);
         trustedContactRecyclerView.setHasFixedSize(true);
 
-        dbHandler = new DBHandler(this);
+        contactList.clear();
+        contactList.addAll(dbHandler.getAllContacts());
+        adapter.notifyDataSetChanged();
 
     }
 
@@ -77,16 +83,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private boolean hasReadSmsPermission() {
-        return ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void requestReceiveSMSPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.RECEIVE_SMS)) {
-            return;
-        }
-        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.RECEIVE_SMS},
-                SMS_PERMISSION_CODE);
+    private void requestAllPermissions() {
+        PermissionManager.grantAllPermissions(MainActivity.this, permissionList);
     }
 
     public void pickContact(View v) {
@@ -108,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
             int contactNameIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
             contactNumber = cursor.getString(contactNumberIndex);
             contactName = cursor.getString(contactNameIndex);
-            addContactToTrustedList(contactName, contactNumber);
+            addContactToTrustedList(contactName, ContactFormat.format(contactNumber));
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
