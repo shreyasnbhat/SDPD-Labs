@@ -66,8 +66,9 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
         if (PermissionManager.checkPermission(context, Manifest.permission.SEND_SMS) &&
                 PermissionManager.checkPermission(context, Manifest.permission.READ_PHONE_STATE)) {
             SmsManager smsManager = SmsManager.getDefault();
-            String GPSCoordinatedToBeSent = "Current Coordinates is \nLatitude: " + location.getLatitude() + "\n" +
-                    "Longitude: " + location.getLongitude();
+            String locationHyperlink = "http://www.google.com/maps/place/" +  location.getLatitude() + "," + location.getLongitude();
+            String GPSCoordinatedToBeSent = "Current Coordinates are \nLatitude: " + location.getLatitude() + "\n" +
+                    "Longitude: " + location.getLongitude() + "\nGoogle Maps Link:\n" + locationHyperlink;
             smsManager.sendTextMessage(messageSender, null, GPSCoordinatedToBeSent, null, null);
         }
     }
