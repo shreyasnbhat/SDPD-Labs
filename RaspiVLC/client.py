@@ -1,7 +1,7 @@
 import socket
 import sys
 
-IP = '10.42.0.86'
+IP = 'localhost'
 #IP = 'localhost'
 PORT = int(sys.argv[1])
 BUFFER_SIZE = 1024
